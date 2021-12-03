@@ -1,0 +1,30 @@
+beacon_command_register(
+	"set-clipboard-data",
+	"Set data in clipboard",
+	"Usage : set-clipboard-data https://www.youtube.com/watch?v=dQw4w9WgXcQ" 
+);
+alias set-clipboard-data {
+
+	if(size(@_) != 2)
+	{
+		berror($1, "Bad Usage !");
+		berror($1, beacon_command_detail("set-clipboard-data"));
+		return;
+	}
+    
+    local('$handle $data $args');
+    	
+    # read in the right BOF file
+	$handle = openf(script_resource("set_clip_data.o"));
+	$data   = readb($handle, -1);
+	closef($handle);
+	
+	#pack our arguments
+	$args   = bof_pack($1, "z", $2);
+    	
+    # figure out the arch of this session
+	btask($1, "Launch set-clipboard-data");
+	beacon_inline_execute($1, $data, "go", $args);
+	
+	
+}
